@@ -219,9 +219,9 @@ Everything, bilingual: [docs/README.md](docs/README.md).
   [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.en.md) before taking
   part.
 
-| WeChat group (DSH-Plugins community 3) | QQ group (ID 572549239) |
+| WeChat group (dsh-TUI community 4) | QQ group (ID 572549239) |
 | :---: | :---: |
-| <img src="screenshots/wechat-group.jpg" alt="DSH-Plugins community WeChat group 3 QR code" width="200"> | <a href="screenshots/qq-group.jpg"><img src="screenshots/qq-group.jpg" alt="dsh-TUI community QQ group QR code, group 572549239" width="280"></a> |
+| <img src="screenshots/wechat-group.jpg" alt="dsh-TUI community WeChat group 4 QR code" width="200"> | <img src="screenshots/qq-group.png" alt="dsh-TUI community QQ group QR code" width="200"> |
 
 > The WeChat QR code expires roughly every 7 days; if it stops working, use
 > the QQ group (572549239) or open an issue to nudge us for a refresh.
