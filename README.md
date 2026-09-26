@@ -41,67 +41,10 @@ Keys and commands: [Interaction and commands](docs/interaction.en.md). Everythin
 
 ## Preview
 
-<div align="center">
 <picture>
   <source media="(max-width: 640px)" srcset="docs/assets/readme/preview-en-mobile.svg">
-  <img src="docs/assets/readme/preview-en.svg" alt="Reflowed dsh-TUI recording: welcome, command completion, help highlights and typing." width="640">
+  <img src="docs/assets/readme/preview-en.svg" alt="Recorded dsh-TUI session: welcome, completion, help and typing, with animated pixel whale." width="72%">
 </picture>
-</div>
-
-<details>
-<summary>Preview details: all captured shortcuts and commands</summary>
-
-Welcome to dsh-TUI · Explore the uncharted!
-
-`deepseek-flash` · Max effort · Capture version `v0.10.2`
-
-Context loaded: system prompt **18 sections**, runtime context **2 items**, tools **27**. `Ctrl+P` expands the context.
-
-Tip: in `/tree`, type in the search box to filter branches. `/tips` opens the tips list.
-
-The captured completion list contains 60 items. It shows `/new`, `/clear`, `/compact`, `/resume` and `/rename`, followed by 55 more; `/he` filters it to `/help`.
-
-| Shortcut | Action |
-| --- | --- |
-| `/` | Commands |
-| `?` | This help |
-| `Ctrl+O` | Verbose output |
-| `Ctrl+T` | Open trajectory |
-| `Ctrl+R` | Search history |
-| `Ctrl+C` | Interrupt |
-| `Ctrl+D` | Exit |
-| `Ctrl+L` | Redraw |
-| `Esc` | Clear input |
-| `Up / Down` | History |
-| `Left / Right` | Move cursor |
-| `Ctrl+Left / Ctrl+Right` | Word jumps |
-| `Tab` | Complete command |
-| `Shift+Tab` | Cycle mode |
-| `Ctrl+G` | Open editor |
-| `Ctrl+Q` | Fold todos |
-
-| Command | Description |
-| --- | --- |
-| `/new` | Start a new conversation |
-| `/clear` | Clear the conversation |
-| `/compact` | Summarize earlier turns to free context space |
-| `/resume` | Continue a saved session |
-| `/rename` | Rename the current session |
-| `/recap` | Generate a recap of recent session activity |
-| `/rewind` | Return the session to an earlier message |
-| `/tree` | Browse the session family tree (rewind / fork / adopt) |
-| `/fork` | Fork the current session into a resumable copy |
-| `/export` | Save the session as a Markdown file |
-| `/btw` | Ask a quick side question without interrupting the conversation |
-| `/trace` | Show the session event trace timeline |
-| `/agentview` | Open the agent view (all sessions) |
-| `/help` | Show shortcuts and commands |
-
-Help navigation: `Up / Down` scroll, `PgUp / PgDn` change pages, `Home / End` jump, `Esc` closes help.
-
-The preview ends by typing `Hello, let us begin`; no model request is submitted. The animation reflows the recorded content for readability; this static detail view preserves the captured help text without a reading time limit.
-
-</details>
 
 ## Featured & Listed
 
