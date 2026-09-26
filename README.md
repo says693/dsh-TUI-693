@@ -43,7 +43,7 @@ Keys and commands: [Interaction and commands](docs/interaction.en.md). Everythin
 
 <picture>
   <source media="(max-width: 640px)" srcset="docs/assets/readme/preview-en-mobile.svg">
-  <img src="docs/assets/readme/preview-en.svg" alt="Recorded dsh-TUI session: welcome, completion, help and typing, with animated pixel whale." width="72%">
+  <img src="docs/assets/readme/preview-en.svg" alt="Recorded dsh-TUI session: welcome, completion, help and typing, with animated pixel whale." width="78%">
 </picture>
 
 ## Featured & Listed
