@@ -42,7 +42,7 @@
 
 <picture>
   <source media="(max-width: 640px)" srcset="docs/assets/readme/preview-zh-mobile.svg">
-  <img src="docs/assets/readme/preview-zh.svg" alt="dsh-TUI 会话录制：欢迎界面、补全、帮助与输入，以及像素鲸鱼动画。" width="87.5%">
+  <img src="docs/assets/readme/preview-zh.svg" alt="dsh-TUI 会话录制：欢迎界面、补全、帮助与输入，以及像素鲸鱼动画。" width="72%">
 </picture>
 
 ## 官方收录
