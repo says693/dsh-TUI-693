@@ -40,10 +40,67 @@
 
 ## 界面预览
 
+<div align="center">
 <picture>
   <source media="(max-width: 640px)" srcset="docs/assets/readme/preview-zh-mobile.svg">
-  <img src="docs/assets/readme/preview-zh.svg" alt="dsh-TUI 会话录制：欢迎界面、补全、帮助与输入，以及像素鲸鱼动画。" width="72%">
+  <img src="docs/assets/readme/preview-zh.svg" alt="重新排版的 dsh-TUI 录制：欢迎界面、命令补全、帮助节选与输入。" width="640">
 </picture>
+</div>
+
+<details>
+<summary>预览明细：录制中的全部快捷键与命令</summary>
+
+欢迎使用 dsh-TUI · 探索未知！
+
+`deepseek-flash` · 最高推理强度 · 录制版本 `v0.10.2`
+
+已加载上下文：系统提示词 **18 段**、运行时上下文 **2 项**、工具 **27**。`Ctrl+P` 展开上下文。
+
+提示：在 `/tree` 搜索框中输入内容可筛选分支，`/tips` 打开提示列表。
+
+录制中的补全列表共 60 项，显示 `/new`、`/clear`、`/compact`、`/resume` 和 `/rename`，另有 55 项；输入 `/he` 后筛选为 `/help`。
+
+| 快捷键 | 操作 |
+| --- | --- |
+| `/` | 查看命令 |
+| `?` | 查看本帮助 |
+| `Ctrl+O` | 详细输出 |
+| `Ctrl+T` | 打开会话轨迹 |
+| `Ctrl+R` | 搜索历史 |
+| `Ctrl+C` | 打断 |
+| `Ctrl+D` | 退出 |
+| `Ctrl+L` | 重绘 |
+| `Esc` | 清空输入 |
+| `Up / Down` | 历史 |
+| `Left / Right` | 移动光标 |
+| `Ctrl+Left / Ctrl+Right` | 按词跳转 |
+| `Tab` | 补全命令 |
+| `Shift+Tab` | 切换模式 |
+| `Ctrl+G` | 打开编辑器 |
+| `Ctrl+Q` | 折叠待办 |
+
+| 命令 | 说明 |
+| --- | --- |
+| `/new` | 新开会话 |
+| `/clear` | 清空当前会话 |
+| `/compact` | 压缩会话历史 |
+| `/resume` | 恢复历史会话 |
+| `/rename` | 重命名当前会话 |
+| `/recap` | 生成最近会话活动摘要 |
+| `/rewind` | 回退会话到历史消息 |
+| `/tree` | 浏览会话分叉树（回退、分叉、切分支） |
+| `/fork` | 把当前会话分叉为可恢复副本 |
+| `/export` | 导出会话为 Markdown 文件 |
+| `/btw` | 在不中断当前对话的情况下提出旁支问题 |
+| `/trace` | 显示会话事件轨迹时间线 |
+| `/agentview` | 打开会话总览 |
+| `/help` | 查看快捷键与命令 |
+
+帮助页导航：上下键滚动，`PgUp / PgDn` 翻页，`Home / End` 跳至首尾，`Esc` 关闭。
+
+预览最后展示输入过程，未提交模型请求。动画对录制内容重新排版以便阅读；此处静态保留录制中的帮助内容，不受动画停留时间限制。
+
+</details>
 
 ## 官方收录
 
