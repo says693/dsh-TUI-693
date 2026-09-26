@@ -30,7 +30,7 @@ dsh-tui
 - `dsh-tui safe`: safe mode — read-only environment view, lists profile plugins, suggests fixes, and can create a clean rescue profile (see §5.5).
 - `dsh --profile dsh-tui`: manual launch, equivalent to `dsh-tui` (`/update` only works this way).
 - Running a model needs `DEEPSEEK_API_KEY`. Run `/doctor` to check the environment.
-- Primary verified dsh engine version: `0.1.7-rc.1`. See `ADAPTER.md` for compatibility lines; versions outside that list show a drift note and the command to align on the logo page.
+- Primary verified dsh engine version: `0.1.7-rc.2`. See `ADAPTER.md` for compatibility lines; versions outside that list show a drift note and the command to align on the logo page.
 - If the logo page shows a ⚠ version-drift warning, align the dsh engine:
   `npm i -g @deepseek-ai/dsh@<版本>`
 
@@ -105,7 +105,7 @@ dsh-tui
 | `Ctrl+U` / `Ctrl+K` | delete before the cursor (to line start) / after the cursor (to line end) |
 | `Ctrl+W` | delete the previous word |
 | `Backspace` / `Delete` | delete previous / next character; **with a selection, delete the whole selection** |
-| `↑` / `↓` | move between lines when multi-line; browse input history when single-line (50 entries) |
+| `↑` / `↓` | move between lines when multi-line; browse input history when single-line (last 200 entries, kept across restarts) |
 | `Ctrl+V` (⌘V) / `Alt+V` | paste: text / file path (images auto `@`-referenced) / clipboard bitmap (`[Image #N]` attachment); use `Alt+V` when the terminal swallows `Ctrl+V` |
 | `Ctrl+G` | edit the input in the `$VISUAL`/`$EDITOR` external editor (`:cq` keeps the draft; prompts you to configure when unset) |
 | `Ctrl+Shift+E` (⌘⇧E) | open the **full-screen draft editor** (or click `⛶` at the end of the input line): line numbers, current line highlighted, `Enter` newline, `Ctrl+Enter` send, `Esc` collapse (draft kept); off at `/settings → 全屏草稿编辑` |
@@ -211,7 +211,7 @@ changes save automatically, `Esc` exits
 - Image paths auto-become `[Image #N]` attachments.
 
 **Subagent panel (Ctrl+A)**
-`↑/↓` browse · `Enter` view details · `Esc` close; details page `←/→` page, `X` interrupts while running; subagents render as live card rows.
+`↑/↓` browse · `Enter` view details · `Esc` close; details page `←/→` page, `X` interrupts while running; subagents render as live card rows. The panel mirrors every child this session dispatched — `subagent`/`send_message` runs, continuable re-dispatches (each new run resets the row), and workflow/ralph members — and re-folds durable discovery facts from the session log on resume, so restarting no longer blanks it. Historical rows without live timing show a `⚪` state instead of a fake duration.
 
 **Double-press Esc time-travel (rewind)**
 List `↑/↓` + `Enter` to confirm · confirm page `Enter` rewind / `Esc` back · only `Esc` responds while a plugin decision is pending
@@ -343,6 +343,7 @@ Keys are in §2.1:
 - `Tab` = **follow-up** (queue after the turn)
 - `Ctrl+Enter` = **interrupt** (interrupt and send)
 - `Alt+Up` bring the last unhandled message back
+- `↑` recalling a message that is still queued also withdraws that queued entry (same as `Alt+Up`, so the same text is not sent twice); once the running turn claimed it, only a notice appears
 - `Esc` (with pending) interrupt and re-send
 - `/btw …` side question never interrupts the main turn
 

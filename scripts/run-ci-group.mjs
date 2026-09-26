@@ -32,7 +32,8 @@
  *     CI 那一次失败的原始帧字节才是证据。
  */
 import { spawnSync } from 'node:child_process'
-import { appendFileSync, mkdirSync, rmSync, statSync } from 'node:fs'
+import { appendFileSync, mkdirSync, mkdtempSync, rmSync, statSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 const env = { NODE_ENV: 'production', ...process.env }
@@ -108,6 +109,11 @@ const GROUPS = {
 // 空转重渲染风暴回归（issue #433）：长历史 + 30ms 空转 commit 风暴下
 // renderScrollTop / 画面 / 输入框行数必须逐帧恒定，几何不震荡。
     ["repro-idle-oscillation", ['node', '--import', 'tsx/esm', 'scripts/repro-idle-oscillation.tsx']],
+// 静置空转的终端下泄回归：inline 模式下光标停在内容下一行时，用 LF 补行会
+// 逐行滚动终端——一帧「什么都没变」的画面也往回滚缓冲里塞一份重复视口
+// （实测 ~73 LF/s）。静置窗口内 stdout 不得出现 LF、回滚缓冲不得增长，同时
+// 鲸鱼闲置动画必须仍在重绘（不许靠冻结界面取巧）。
+    ["verify-idle-repaint", ['node', '--import', 'tsx/esm', 'scripts/verify-idle-repaint.tsx']],
 // settled 子代理卡片不得永久持有动画时钟（空闲帧归零回归）：
 // 曾以 120ms/卡片持续驱动 React commit，N 张相位错开合成 ~30ms
 // 均匀帧 cadence。
@@ -279,6 +285,11 @@ const GROUPS = {
 // verify-composer-draft-handoff；在途 staging 围栏在 verify:build 链的
 // verify-image-preview。完整 8 场景矩阵见 PR #942 历史。
     ["verify-composer-draft-screen-switch", ['node', '--import', 'tsx/esm', 'scripts/verify-composer-draft-screen-switch.tsx']],
+// 队列召回撤回回归（issue #986 后半）：↑ 走位召回的文本若仍挂在 pending 里，
+// 必须把那条排队副本撤下来（否则改完重发等于同一句发两遍）——可撤时队列少一条
+// 且有提示、已被本轮取走时如实报「撤不回来」且副本留在队列、文本不匹配的排队
+// 项一律不动。
+    ["verify-prompt-history-queue-retract", ['node', 'scripts/verify-prompt-history-queue-retract.mjs']],
   ],
   'session-workspace': [
 // 审批服务配置回归（issue #49 尾巴）：裸组合 cordis.yml 必须挂载
@@ -312,6 +323,12 @@ const GROUPS = {
 // 会话标题回归：选择器标题宽容读取（带未标记第三方事件的日志
 // 不能让标题退化成目录名），/rename 的最后一条 session/title 优先。
     ["verify-session-titles", ['node', 'scripts/verify-session-titles.mjs']],
+// session/title 载荷形状回归（issue #1006）：真存储栈 e2e——离线写入器
+// （/fork + 选择器改名）与实时 /rename 共用的 userTitleData 必须带
+// messageSeqs/source，否则严格读取把整份日志判损坏（stored log is
+// corrupt: title messageSeqs requires an array）而会话再也 resume 不了；
+// 同一夹具塞旧形状 `{ title }` 必须仍被拒（红态自证，回退修复即失败）。
+    ["verify-session-title-payload", ['node', 'scripts/verify-session-title-payload.mjs']],
 // resume 遗留事件注册回归（issue #153）：真实存储栈 e2e——注册前
 // load() 抛 SessionFormatUnsupportedError（原样复现 issue）、注册后
 // 放行；日志字节与 0600 权限绝不被改写；非白名单未知类型保持拒读
@@ -358,6 +375,11 @@ const GROUPS = {
 // 输入历史草稿回归（issue #287）：首次 ↑ 保存未提交草稿，遍历历史后
 // ↓ 回到末尾必须恢复原文，重复越界不能把草稿清空。
     ["verify-prompt-history-draft", ['node', 'scripts/verify-prompt-history-draft.mjs']],
+// 输入历史持久化回归（issue #986）：↑/↓ 必须走磁盘上的 history.jsonl——
+// 冷启动后第一次 ↑ 召回的是最新一条（文件是追加序，漏了反转会翻出最旧的）、
+// 能一路走到最旧并在那里钳住、本次进程提交的条目排在持久化条目之后且
+// 接缝处不重复、重新挂载（重启）后仍能召回。
+    ["verify-prompt-history-persist", ['node', 'scripts/verify-prompt-history-persist.mjs']],
 // 文件补全回归（issue #278）：CMake 构建目录与任意大型兄弟目录不得
 // 独占 100 条全局预算，普通深层源码也不能被固定深度静默截断。
     ["verify-file-completion", ['node', 'scripts/verify-file-completion.mjs']],
@@ -405,6 +427,11 @@ const GROUPS = {
 // （开始/结束时刻、耗时、运行中时长）；折叠的终端脚本与超出 480 字符预算
 // 的 args 仍弹完整内容（弹层优先真隐藏内容）。
     ["verify-tool-tooltip-gating", ['node', '--import', 'tsx/esm', 'scripts/verify-tool-tooltip-gating.tsx']],
+// 工具卡 i18n 回归（issue #980）：卡片簇（AssistantToolUseMessage /
+// SplitDiffView）的界面文案——工具名、按行折叠提示、退出码/信号行、
+// 运行中占位、搜索截断——必须在 zh/en 双语都走字典渲染；与 verify-i18n
+// 的字面量 tripwire 互补（那边管源码侧，这边管渲染侧）。
+    ["verify-toolcard-i18n", ['node', '--import', 'tsx/esm', 'scripts/verify-toolcard-i18n.tsx']],
 // 悬停浮层第二批回归：@ 文件补全面板长路径悬停弹全路径（完整可见的短路径
 // 不弹）、会话列表行标题截断悬停弹完整标题+绝对时间+cwd（未截断不重复
 // 标题）、状态栏 model/git 字段悬停明细（provider/ctx 窗口/完整分支）。
@@ -543,6 +570,10 @@ const GROUPS = {
 // 子代理模型路由回归（issue #191）：child scope 没有 AgentOptions 路由时，
 // 首次请求继承 TUI 当前完整路由；显式 child 路由保持优先。
     ["verify-subagent-model-route", ['node', '--import', 'tsx/esm', 'scripts/verify-subagent-model-route.tsx']],
+// 子代理面板同步回归（issue #966）：catalog/workflow 持久发现、重派 runId
+// 分代（含上一 epoch 迟到 end 不得错杀）、resume 日志 bootstrap（历史行
+// 不进转录）、会话绑定延迟愈合与 peer 会话不污染。
+    ["verify-subagent-panel-sync", ['node', '--import', 'tsx/esm', 'scripts/verify-subagent-panel-sync.tsx']],
 // 子进程 stderr 接管回归（issue #17）：inherit 的 MCP 子进程 stderr
 // 不再裸写终端破坏 alt-screen，输出去重聚合为受控通知。
     ["verify-child-stderr", ['node', '--import', 'tsx/esm', 'scripts/verify-child-stderr.tsx']],
@@ -768,12 +799,28 @@ for (const entry of group) {
   console.log('\n===== ' + name + ' =====')
   const renderLog = join(RENDER_LOG_DIR, name + '.log')
   rmSync(renderLog, { force: true })
+  // One throwaway HOME per script: fixtures used to share the machine's real
+  // home, so a script that submits text left entries in
+  // `~/.dsh-tui/history.jsonl` for whatever ran next — and `↑` walks that file
+  // (#986), which turned one script's leftovers into the next script's
+  // assertion failure. A local group run must also never write the runner's
+  // own history. `HOME`/`USERPROFILE` sit after `env` (which carries the real
+  // ones) so the real home can never win; an entry may still override them
+  // through its own `extraEnv`.
+  const scriptHome = mkdtempSync(join(tmpdir(), 'dsh-tui-group-home-'))
   const startedAt = performance.now()
   const r = spawnSync(argv[0], argv.slice(1), {
-    env: { DSH_TUI_RENDER_LOG: renderLog, ...env, ...(extraEnv ?? {}) },
+    env: {
+      DSH_TUI_RENDER_LOG: renderLog,
+      ...env,
+      HOME: scriptHome,
+      USERPROFILE: scriptHome,
+      ...(extraEnv ?? {}),
+    },
     stdio: 'inherit',
     shell: false,
   })
+  rmSync(scriptHome, { recursive: true, force: true })
   const seconds = (performance.now() - startedAt) / 1000
   const failed = r.status !== 0
   results.push({ name, failed, status: r.status, seconds })
